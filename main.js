@@ -25,6 +25,5 @@ function createNote() {
 // Чтение клика по пункту, смена класса выполненности
 
 document.getElementById('noteList').addEventListener('click', function(e) {
-    if (e.target.classList.contains('noteItem')) {
         e.target.closest('.noteItem').classList.toggle('isDone');
     })
