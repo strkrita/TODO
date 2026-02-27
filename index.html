@@ -3,36 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>TODO LIST</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="css/favicon.png" type="image/png">
 </head>
 <body>
-    <div id="mainWrapper">
-        <div id="header">
-            <span id="title">TODO LIST</span>
-            <div id="selectWrapper">
-                <button id="select">ALL</button>
+    <div class="mainWrapper">
+        <div class="header">
+            <span class="header__title">TODO LIST</span>
+            <div class="selectWrapper">
+                <button class="selectWrapper__select">ALL</button>
             </div>
         </div>
 
-        <div id="mainBody">
-            <div id="noteList">
-                <div class="note" id="note1">
-                    <label class="noteItem">
-                            <span class="noteCheckbox"></span>
-                            <span class="labelName">NOTE #1</span>
-                    </label>
-                </div>
-                <div class="note" id="note2">
-                    <label class="noteItem isDone">
-                            <span class="noteCheckbox"></span>
-                        <span class="labelName">NOTE #2</span>
-                    </label>
-                </div>
+        <div class="mainBody">
+            <div class="noteList"></div>
+            <button class="mainBody__addNote">add</button>
+        </div>
+    </div>
+
+    <div class="addNoteModal addNoteModal_hidden">
+        <div class="modalContent">
+            <div class="modalContent__title">NEW NOTE</div>
+            <input class="modalContent__inputNote" id="inputNote" type="text" placeholder="Input your note..." maxlength="100">
+            <div class="modalButtons">
+                <div class="modalButtons__cancel">CANCEL</div>
+                <div class="modalButtons__apply">APPLY</div>
             </div>
-            <button id="addNote">add</button>
         </div>
     </div>
 </body>
-<script src="main.js"></script>
+<script src="js/main.js"></script>
 </html>

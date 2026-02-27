@@ -1,0 +1,232 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,500;1,500&display=swap');
+
+html {
+    --main-bg-color: #F7F7F7;
+    --main-color-purple: #6C63FF;
+    --main-color-black: #252525;
+    --main-color-purple-hover: #5850DD;
+    --main-color-red: #E50000;
+
+    background-color: var(--main-bg-color);
+}
+
+body {
+    font-family: "Kanit", sans-serif;
+    font-weight: 500;
+    color: var(--main-color-black);
+    position: relative;
+    margin: 0;
+}
+
+.mainWrapper {
+    position: relative;
+    width: 53.5%;
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    height: 100vh;
+}
+
+.header {
+    height: 20%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+.header__title {
+    font-size: 5.5vh;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.selectWrapper {
+    height: 28%;
+    width: 100%;
+}
+
+.selectWrapper__select {
+    height: 100%;
+    width: 11.5%;
+    font-size: 2.5vh;
+    background-color: var(--main-color-purple);
+    color: var(--main-bg-color)
+}
+
+.mainBody {
+    flex: 1;
+    font-size: 2.8vh;
+}
+
+.noteList {
+    height: inherit;
+    width: inherit;
+    display: flex;
+    flex-direction: column;
+    padding: 5% 15.3%;
+}
+
+.noteList__separator {
+    height: 2px;
+    width: 100%;
+    background-color: var(--main-color-purple);
+    opacity: 50%;
+    margin: 15px 0;
+}
+
+.note__noteItem  {
+    display: flex;
+    align-items: center;
+    user-select: none;
+}
+
+.note__noteCheckbox {
+    display: inline-block;
+    height: 3.6vh;
+    width: 3.6vh;
+
+    border: 0.25vh solid var(--main-color-purple);
+    border-radius: 10%;
+    margin-right: 3.5%;
+
+    cursor: pointer;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+
+.note__noteItem.note__noteItem_isChecked .note__noteCheckbox {
+    background-color: var(--main-color-purple);
+    background-image: url("isChecked.svg");
+    background-size: 2.5vh;
+    background-position: 50% 35%;
+    background-repeat: no-repeat;
+}
+
+.note__labelName {
+    position: relative;
+    text-shadow: 0 5px 5px rgba(0, 0, 0, 0.35);
+    transition: all 0.2s ease;
+    width: fit-content;
+}
+
+.note__noteItem.note__noteItem_isChecked .note__labelName {
+    opacity: 0.5;
+}
+
+.note__noteItem .note__labelName::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -5px;
+    width: calc(100% + 10px);
+    height: 5%;
+    background-color: var(--main-color-black);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: all 0.5s;
+}
+
+.note__noteItem.note__noteItem_isChecked .note__labelName::before {
+    transform: scaleX(1);
+}
+
+.note__noteItem:hover *{
+    box-shadow: none;
+    text-shadow: none;
+}
+
+/*Модальное окно*/
+
+.addNoteModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.addNoteModal_hidden {
+    display: none;
+}
+
+.modalContent {
+    position: relative;
+    width: 500px;
+    height: 289px;
+    background-color: var(--main-bg-color);
+    border-radius: 16px;
+
+    top: 118px;
+    left: 32.5%;
+
+    box-sizing: border-box;
+    padding: 18px 30px;
+}
+
+.modalContent__title {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.modalContent__inputNote {
+    width: 100%;
+    height: 38px;
+    box-sizing: border-box;
+    padding: 0 16px;
+    border: 2px solid var(--main-color-purple);
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+input::placeholder {
+    color: var(--main-color-purple);
+    opacity: 50%;
+}
+
+input:focus {
+    outline: none;
+    outline-offset: 0;
+    box-shadow: 0 0 10px var(--main-color-purple);
+    border: 2px solid var(--main-color-purple);
+}
+
+.modalButtons {
+    position: absolute;
+    bottom: 18px;
+    display: flex;
+    width: 440px;
+    justify-content: space-between;
+}
+
+
+
+
+.modalButtons div {
+    font-size: 18px;
+    height: 38px;
+    padding: 0 22px;
+    border-radius: 5px;
+    border: 2px solid var(--main-color-purple);
+    cursor: pointer;
+    align-content: center;
+}
+
+.modalButtons__cancel {
+    color: var(--main-color-purple);
+    background-color: var(--main-bg-color);
+}
+
+.modalButtons__apply {
+    color: var(--main-bg-color);
+    background-color: var(--main-color-purple);
+}
