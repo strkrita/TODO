@@ -1,13 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,500;1,500&display=swap');
 
 html {
-    --main-bg-color: #F7F7F7;
+    --main-color-white: #F7F7F7;
     --main-color-purple: #6C63FF;
     --main-color-black: #252525;
-    --main-color-purple-hover: #5850DD;
+    --main-color-purple-hover: #534CC2;
+    --main-color-purple-background: #6C63FF20;
     --main-color-red: #E50000;
 
-    background-color: var(--main-bg-color);
+    background-color: var(--main-color-white);
 }
 
 body {
@@ -43,35 +44,62 @@ body {
     display: flex;
     align-items: center;
 }
+/*     Фильтрация     */
 
-.selectWrapper {
-    height: 28%;
-    width: 100%;
+.taskFilter {
+    position: relative;
+    margin-left: auto;
+    display: inline-block;
 }
 
-.selectWrapper__select {
-    height: 100%;
-    width: 11.5%;
+.taskFilter__trigger {
+    height: 38px;
+    width: 85px;
+
     font-size: 2.5vh;
+    color: var(--main-color-white);
+
     background-color: var(--main-color-purple);
-    color: var(--main-bg-color)
+    border: 2px solid var(--main-color-purple);
+    border-radius: 5px;
+
+    cursor: pointer;
+    text-align: center;
 }
 
+.taskFilter__trigger:hover {
+    box-shadow: 0 0 10px var(--main-color-purple);
+}
+
+.taskFilter__list {
+    display: none;
+}
+
+
+/*     Основная часть с заметками     */
 .mainBody {
     flex: 1;
     font-size: 2.8vh;
+    display: flex;
+    flex-direction: row;
+    height: 80%;
+    margin-bottom: 26px;
 }
 
 .noteList {
     height: inherit;
-    width: inherit;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    padding: 5% 15.3%;
+    padding: 5% 8px 5% 15.3%;
+    list-style-type: none;
+    margin: 0;
+    overflow: auto;
+    scrollbar-width: thin;
 }
 
 .noteList__separator {
-    height: 2px;
+    height: 1.5px;
     width: 100%;
     background-color: var(--main-color-purple);
     opacity: 50%;
@@ -82,12 +110,14 @@ body {
     display: flex;
     align-items: center;
     user-select: none;
+
 }
 
 .note__noteCheckbox {
     display: inline-block;
     height: 3.6vh;
     width: 3.6vh;
+    flex-shrink: 0;
 
     border: 0.25vh solid var(--main-color-purple);
     border-radius: 10%;
@@ -108,10 +138,13 @@ body {
 }
 
 .note__labelName {
+    font-size: 2.8vh;
+    font-weight: normal;
     position: relative;
     text-shadow: 0 5px 5px rgba(0, 0, 0, 0.35);
     transition: all 0.2s ease;
     width: fit-content;
+    margin: 0;
 }
 
 .note__noteItem.note__noteItem_isChecked .note__labelName {
@@ -140,7 +173,80 @@ body {
     text-shadow: none;
 }
 
-/*Модальное окно*/
+
+/*     Кнопки удаления и редактирования     */
+
+.note__noteItem:hover .note__options {
+    visibility: visible;
+}
+
+.note__options {
+    visibility: hidden;
+    display: flex;
+    width: 11%;
+    height: fit-content;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    padding: 0 4px 0 8px;
+    justify-content: space-between;
+    margin-left: auto;
+    transition: all 0.1s ease;
+}
+
+.note__options button {
+    border: none;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    background-color: var(--main-color-white);
+    background-repeat: no-repeat;
+    background-size: contain;
+    filter: grayscale(1) opacity(25%);
+    cursor: pointer;
+}
+
+.note__options button:hover {
+    filter: grayscale(0) opacity(100%);
+}
+
+.note__buttonEdit {
+    background-image: url("change.svg");
+}
+
+.note__buttonDelete {
+    background-image: url("delete.svg");
+}
+
+
+/*     Кнопка добавления     */
+
+.mainBody__addNote {
+    height: 50px;
+    width: 50px;
+    flex-shrink: 0;
+    align-self: flex-end;
+    margin: 0 8px 32px 32px;
+    border: 3px solid var(--main-color-purple);
+    border-radius: 100%;
+    background-color: var(--main-color-purple);
+    background-image: url("addButton.svg");
+    background-size: 24px;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    cursor: pointer;
+
+}
+
+.mainBody__addNote:hover {
+    box-shadow: 0 0 10px var(--main-color-purple);
+}
+.mainBody__addNote:active {
+    background-color: var(--main-color-purple-hover);
+}
+
+
+
+/*     Модальное окно     */
 
 .addNoteModal {
     position: fixed;
@@ -162,7 +268,7 @@ body {
     position: relative;
     width: 500px;
     height: 289px;
-    background-color: var(--main-bg-color);
+    background-color: var(--main-color-white);
     border-radius: 16px;
 
     top: 118px;
@@ -176,6 +282,11 @@ body {
     font-size: 24px;
     text-align: center;
     margin-bottom: 25px;
+    content: "NEW NOTE";
+}
+
+.modalContent__title.modalContent__title_isEditingNote {
+    content: "EDIT NOTE";
 }
 
 .modalContent__inputNote {
@@ -200,6 +311,11 @@ input:focus {
     border: 2px solid var(--main-color-purple);
 }
 
+input.modalContent__inputNote_invalid {
+    border: 2px solid var(--main-color-red);
+    background: var(--main-color-purple-background);
+}
+
 .modalButtons {
     position: absolute;
     bottom: 18px;
@@ -208,10 +324,8 @@ input:focus {
     justify-content: space-between;
 }
 
-
-
-
-.modalButtons div {
+.modalButtons button {
+    font: inherit;
     font-size: 18px;
     height: 38px;
     padding: 0 22px;
@@ -223,10 +337,18 @@ input:focus {
 
 .modalButtons__cancel {
     color: var(--main-color-purple);
-    background-color: var(--main-bg-color);
+    background-color: var(--main-color-white);
+}
+
+.modalButtons__cancel:hover {
+    background-color: var(--main-color-purple-background);
 }
 
 .modalButtons__apply {
-    color: var(--main-bg-color);
+    color: var(--main-color-white);
     background-color: var(--main-color-purple);
+}
+
+.modalButtons__apply:hover {
+    background-color: var(--main-color-purple-hover);
 }

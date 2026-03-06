@@ -9,25 +9,33 @@
 <body>
     <div class="mainWrapper">
         <div class="header">
-            <span class="header__title">TODO LIST</span>
-            <div class="selectWrapper">
-                <button class="selectWrapper__select">ALL</button>
+            <h1 class="header__title">TODO LIST</h1>
+            <div class="taskFilter">
+                <button class="taskFilter__trigger" aria-expanded="false" aria-haspopup="listbox">
+                    ALL
+                </button>
+
+                <ul class="taskFilter__list" role="listbox" aria-label="Filter tasks">
+                    <li class="taskFilter__option" role="option" aria-selected="true">ALL</li>
+                    <li class="taskFilter__option" role="option">COMPLETED</li>
+                    <li class="taskFilter__option" role="option">UNCOMPLETED</li>
+                </ul>
             </div>
         </div>
 
         <div class="mainBody">
-            <div class="noteList"></div>
-            <button class="mainBody__addNote">add</button>
+            <ul class="noteList"></ul>
+            <button class="mainBody__addNote"></button>
         </div>
     </div>
 
     <div class="addNoteModal addNoteModal_hidden">
         <div class="modalContent">
-            <div class="modalContent__title">NEW NOTE</div>
+            <div class="modalContent__title modalContent__title_isEditingNote">NEW NOTE</div>
             <input class="modalContent__inputNote" id="inputNote" type="text" placeholder="Input your note..." maxlength="100">
             <div class="modalButtons">
-                <div class="modalButtons__cancel">CANCEL</div>
-                <div class="modalButtons__apply">APPLY</div>
+                <button class="modalButtons__cancel">CANCEL</button>
+                <button class="modalButtons__apply">APPLY</button>
             </div>
         </div>
     </div>
