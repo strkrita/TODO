@@ -3,29 +3,46 @@ class MainNoteList {
          this.notes = [];
          this.apiUrl = 'https://jsonplaceholder.typicode.com/todos';
          this.container = document.querySelector('.noteList');
-         this.loadNotes();
+
+         this.currentFilter = localStorage.getItem('completeFilter') || 'ALL';
 
          this.modal = document.querySelector('.addNoteModal');
          this.isEditing = false;
          this.EditingNoteId = null;
          this.titleInput = null;
+
+         this.initialize();
      }
 
-    async loadNotes() {
-        this.notes = await fetch(`${this.apiUrl}/?_limit=5&_page=1`).then(r => r.json());
+     async initialize() {
+         await this.loadNotes();
+         this.attachEventListeners();
+     }
 
-        this.container.innerHTML = this.notes
+     async loadNotes() {
+         this.isLoading();
+
+         this.notes = await fetch(`${this.apiUrl}/?_limit=5&_page=1`).then(r => r.json());
+
+         this.container.innerHTML += this.notes
             .map((note) => this.createNote(note.title, note.id, note.completed))
             .join('');
 
-        this.attachEventListeners();
-    }
+         this.applyFilter();
 
+         document.querySelector('.taskFilter__trigger').textContent = this.currentFilter.toUpperCase();
+
+         requestAnimationFrame(() => {
+            this.checkListIsEmpty();
+            this.renderSeparators();
+         });
+
+         this.isLoading(false);
+    }
 
     createNote(title, index, completed, asDOM = false) {
         const html = `
             <li class="note" id="${index}">
-                ${index == 1 ? '' : '<div class="noteList__separator"></div>'}
                 <div class="note__noteItem ${completed ? 'note__noteItem_isChecked' : ''}">
                     <span class="note__noteCheckbox"></span>
                     <h3 class="note__labelName">${title}</h3>
@@ -46,8 +63,42 @@ class MainNoteList {
         return html;
     }
 
-    // Прикрепление обработок
     attachEventListeners() {
+        document.querySelector('.taskFilter').addEventListener('click', (e) => {
+            const trigger = document.querySelector('.taskFilter__trigger');
+            const list = document.querySelector('.taskFilter__list');
+
+            // Открытие + закрытие фильтра
+            if (e.target == trigger) {
+                if (trigger.getAttribute('aria-expanded') == 'true') {
+                    this.closeFilter();
+                } else {
+                    this.openFilter();
+                }
+            }
+            // Выбор фильтра
+            else if(e.target.classList.contains('taskFilter__option')) {
+                this.currentFilter = e.target.textContent;
+                trigger.textContent = this.currentFilter.toUpperCase();
+
+                localStorage.setItem('completeFilter', this.currentFilter);
+
+                this.applyFilter();
+
+                //Обновление разделителей
+                requestAnimationFrame(() => {
+                    this.checkListIsEmpty();
+                    this.renderSeparators();
+                });
+
+                this.closeFilter();
+            }
+            else this.closeFilter();
+        });
+
+
+
+         //Смена выполнености + редактирование + удаление
         this.container.addEventListener('click', (e) => {
 
             let eventElement = e.target;
@@ -60,34 +111,18 @@ class MainNoteList {
             //Удаление заметки
              else if (eventElement.matches('.note__buttonDelete')) {
                  let deleteNoteId = eventElement.closest('.note').id;
-                 let deleteNote = document.getElementById(deleteNoteId);
-                 deleteNote.remove();
+                 document.getElementById(deleteNoteId).remove();
 
                 this.notes = this.notes.filter(note => note.id != deleteNoteId);
 
-                this.notes.forEach((note, index) => {
-                    let oldId = note.id;
-                    let newId = index + 1;
-
-                    if (oldId != newId) {
-                        document.getElementById(oldId).id = newId
-                        note.id = newId;
-
-                        const response = fetch(`${this.apiUrl}/${newId}`, {
-                            method: 'PATCH',
-                            headers: {
-                                'Content-Type': 'application/json;charset=utf-8'
-                            },
-                            body: JSON.stringify({
-                                id: newId
-                            })
-                        });
-
-                        if (newId == 1) {
-                            document.getElementById('1').querySelector('.noteList__separator').remove();
-                        }
-                    }
-                });
+                setTimeout(() => {
+                    this.reindex();
+                    this.applyFilter();
+                    requestAnimationFrame(() => {
+                        this.checkListIsEmpty();
+                        this.renderSeparators();
+                    });
+                }, 0);
             }
 
              //Смена класса выполненности
@@ -114,6 +149,75 @@ class MainNoteList {
         document.querySelector('.mainBody__addNote').addEventListener('click', () => this.openModal());
         document.querySelector('.modalButtons__cancel').addEventListener('click', () => this.closeModal());
         document.querySelector('.modalButtons__apply').addEventListener('click', () => this.modalApply())
+    }
+
+    checkListIsEmpty() {
+        const visibleNotes = Array.from(
+            this.container.querySelectorAll('.note:not(.note_hidden)')
+        );
+
+        this.container.querySelector('.noteList__listIsEmpty').style.display = (visibleNotes.length === 0) ? 'flex' : 'none';
+    }
+
+    applyFilter() {
+        this.container.querySelectorAll('.note').forEach(note => {
+            const isCompleted = note.querySelector('.note__noteItem').classList.contains('note__noteItem_isChecked');
+
+            switch(this.currentFilter) {
+                case 'All':
+                    note.classList.remove('note_hidden')
+                    break;
+                case 'Complete':
+                    note.classList.toggle('note_hidden', !isCompleted);
+                    break;
+                case 'Incomplete':
+                    note.classList.toggle('note_hidden', isCompleted);
+                    break;
+            }
+        });
+    }
+
+    renderSeparators() {
+        this.container.querySelectorAll('.noteList__separator').forEach(sepElem => sepElem.remove());
+        const visibleNotes = Array.from(
+            this.container.querySelectorAll('.note:not(.note_hidden)')
+        );
+
+        visibleNotes.slice(1).forEach(note => {
+            const separator = document.createElement('div');
+            separator.className = 'noteList__separator';
+            note.prepend(separator);
+        });
+    }
+
+    reindex() {
+        this.notes.forEach((note, index) => {
+            let oldId = note.id;
+            let newId = index + 1;
+
+            if (oldId != newId) {
+                document.getElementById(oldId).id = newId
+                note.id = newId;
+
+                const response = fetch(`${this.apiUrl}/${newId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body: JSON.stringify({
+                        id: newId
+                    })
+                });
+            }
+        });
+    }
+
+    openFilter() {
+        document.querySelector('.taskFilter__trigger').setAttribute('aria-expanded', 'true')
+    }
+
+    closeFilter() {
+        document.querySelector('.taskFilter__trigger').setAttribute('aria-expanded', 'false')
     }
 
     openModal(isEditing = false, id, noteForEdit) {
@@ -198,6 +302,10 @@ class MainNoteList {
 
                 })
             });
+            requestAnimationFrame(() => {
+                this.renderSeparators();
+                this.checkListIsEmpty();
+            });
         }
 
         this.titleInput.value = '';
@@ -206,6 +314,10 @@ class MainNoteList {
 
     closeModal() {
         this.modal.classList.add('addNoteModal_hidden');
+    }
+
+    isLoading(load = true) {
+        document.querySelector('.loadingDots').classList.toggle('loadingDots_hidden', !load);
     }
 
 };

@@ -16,15 +16,20 @@
                 </button>
 
                 <ul class="taskFilter__list" role="listbox" aria-label="Filter tasks">
-                    <li class="taskFilter__option" role="option" aria-selected="true">ALL</li>
-                    <li class="taskFilter__option" role="option">COMPLETED</li>
-                    <li class="taskFilter__option" role="option">UNCOMPLETED</li>
+                    <li class="taskFilter__option" role="option" aria-selected="true">All</li>
+                    <li class="taskFilter__option" role="option">Complete</li>
+                    <li class="taskFilter__option" role="option">Incomplete</li>
                 </ul>
             </div>
         </div>
 
         <div class="mainBody">
-            <ul class="noteList"></ul>
+            <ul class="noteList">
+                <div class="noteList__listIsEmpty">
+                    <img src="css/empty_notelist.svg">
+                    <p>Empty...</p>
+                </div>
+            </ul>
             <button class="mainBody__addNote"></button>
         </div>
     </div>
@@ -37,6 +42,14 @@
                 <button class="modalButtons__cancel">CANCEL</button>
                 <button class="modalButtons__apply">APPLY</button>
             </div>
+        </div>
+    </div>
+
+    <div class="loadingDots">
+        <div class="dots">
+            <span class="dots__dot"></span>
+            <span class="dots__dot"></span>
+            <span class="dots__dot"></span>
         </div>
     </div>
 </body>
